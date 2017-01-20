@@ -68,12 +68,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item dequeue() {
         checkIfDequeEmpty();
-        int idx = StdRandom.uniform(n);
-        Item item = items[idx];
-        items[idx] = items[--n];
         if (n > 0 && n == items.length/4) {
             resize(items.length/2);
         }
+        int idx = StdRandom.uniform(n);
+        Item item = items[idx];
+        items[idx] = items[--n];
+        items[n] = null;
         return item;
     }
 
