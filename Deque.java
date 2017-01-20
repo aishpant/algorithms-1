@@ -1,6 +1,3 @@
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -175,30 +172,11 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
-    private void print() {
-        StdOut.println("---------------");
-        Node temp = first;
-        while (temp != null) {
-            StdOut.println(temp.item);
-            temp = temp.next;
-        }
-        StdOut.println("---------------");
-    }
-
     /**
      * Unit tests the {@code Deque} data type
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
 
-        Deque<String> deque = new Deque<>();
-        In in = new In(args[0]);      // input file
-        while (!in.isEmpty()) {
-            deque.addFirst(in.readString());
-        }
-        deque.print();
-        while (!deque.isEmpty()) {
-            StdOut.println(deque.removeLast());
-        }
     }
 }

@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.ConcurrentModificationException;
@@ -13,7 +12,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private int n;
     private Item[] items;
-    private final static int INITIAL_SIZE = 2;
+    private static final int INITIAL_SIZE = 2;
 
     /**
      * Initializes an empty RandomizedDeque
@@ -59,11 +58,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     private void resize(int size) {
         Item[] copy = (Item[]) new Object[size];
-        int k = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) {
-                copy[k++] = items[i];
-            }
+        for (int i = 0; i < n; i++) {
+            copy[i] = items[i];
         }
         items = copy;
     }
@@ -74,14 +70,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item dequeue() {
         checkIfDequeEmpty();
-        Item item = null;
-        int idx = -1;
-        while (item == null) {
-            idx = StdRandom.uniform(items.length);
-            item = items[idx];
-        }
-        items[idx] = null;
-        n--;
+        int idx = StdRandom.uniform(n);
+        Item item = items[idx];
+        items[idx] = items[--n];
         if (n > 0 && n == items.length/4) {
             resize(items.length/2);
         }
@@ -94,13 +85,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      */
     public Item sample() {
         checkIfDequeEmpty();
-        Item item = null;
-        int idx;
-        while (item == null) {
-            idx = StdRandom.uniform(items.length);
-            item = items[idx];
-        }
-        return item;
+        int idx = StdRandom.uniform(n);
+        return items[idx];
     }
 
     /**
@@ -112,12 +98,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class ListIterator implements Iterator<Item> {
-        private Item[] copy;           // copy of the items list
+        private Item[] copy;    // copy of the items list
+        private int i = 0;          // to track the iterator
 
         public ListIterator(Item[] items) {
-            copy = (Item[]) new Object[items.length];
-            for (int i = 0 ; i < items.length; i++ ) {
-                copy[i] = items[i];
+            copy = (Item[]) new Object[n];
+            for (int k = 0; k < n; k++) {
+                copy[k] = items[k];
             }
         }
 
@@ -129,15 +116,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            Item item = null;
-            int idx = -1;
-            while (item == null) {
-                idx = StdRandom.uniform(copy.length);
-                item = copy[idx];
-            }
-            if (items[idx] == null || copy[idx] != items[idx]) {
-                throw new ConcurrentModificationException();
-            }
+            int idx = StdRandom.uniform(copy.length);
+            Item item = copy[idx];
+            copy[idx] = copy[n-1];
+            i++;
             return item;
         }
 
@@ -146,7 +128,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
          * @return true if the list has an item; false otherwise
          */
         public boolean hasNext() {
-            return !isEmpty();
+            return i < n;
         }
 
         /**
@@ -164,14 +146,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-    }
-
-    private void print() {
-        StdOut.println("---------------");
-        for (int i = 0 ; i < items.length ; i++) {
-            StdOut.println(items[i]);
-        }
-        StdOut.println("---------------");
     }
 
     /**
