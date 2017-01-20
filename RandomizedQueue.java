@@ -1,6 +1,4 @@
 import edu.princeton.cs.algs4.StdRandom;
-
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -10,9 +8,9 @@ import java.util.NoSuchElementException;
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
+    private static final int INITIAL_SIZE = 2;
     private int n;
     private Item[] items;
-    private static final int INITIAL_SIZE = 2;
 
     /**
      * Initializes an empty RandomizedDeque
@@ -116,9 +114,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            int idx = StdRandom.uniform(copy.length);
+            int idx = StdRandom.uniform(copy.length - i);
             Item item = copy[idx];
-            copy[idx] = copy[n-1];
+            copy[idx] = copy[n-i-1];
+            copy[n-i-1] = null;
             i++;
             return item;
         }
